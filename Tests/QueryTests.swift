@@ -20,7 +20,7 @@ class QueryTests: XCTestCase {
     }
     
   func testEmptyRequest() {
-    let output = "query  {}"
+    let output = "{}"
     let query = Query(readingRequest: ReadingRequest(
       name: "",
       arguments: [
@@ -33,7 +33,7 @@ class QueryTests: XCTestCase {
   }
   
   func testRequestWithEmptyName() {
-    let output = "query  {(ids: 153082687){id,headline}}"
+    let output = "{(ids: 153082687){id,headline}}"
     let query = Query(readingRequest: ReadingRequest(
       name: "",
       arguments: [
@@ -49,7 +49,7 @@ class QueryTests: XCTestCase {
   }
   
   func testRequestWithEmptyArguments() {
-    let output = "query  {content{id,headline}}"
+    let output = "{content{id,headline}}"
     let query = Query(readingRequest: ReadingRequest(
       name: "content",
       arguments: [
@@ -64,7 +64,7 @@ class QueryTests: XCTestCase {
   }
   
   func testRequestWithEmptyFields() {
-    let output = "query  {content(ids: 153082687)}"
+    let output = "{content(ids: 153082687)}"
     let query = Query(readingRequest: ReadingRequest(
       name: "content",
       arguments: [
@@ -78,7 +78,7 @@ class QueryTests: XCTestCase {
   }
   
   func testRequestWithAlias() {
-    let output = "query  {test:content(ids: 153082687){id,headline}}"
+    let output = "{test:content(ids: 153082687){id,headline}}"
     let query = Query(readingRequest: ReadingRequest(
       withAlias: "test",
       name: "content",
@@ -94,8 +94,8 @@ class QueryTests: XCTestCase {
   }
   
   func testComplexRequest() {
-    let output = "query  {content(ids: 153082687){id,headline,image(role: \"opener\"){id,homeSection{displayName},url(ratio: 1.777,size: 200)}}}"
-    let query = Query(readingRequest: ReadingRequest(
+    let output = "query ComplexQuery {content(ids: 153082687){id,headline,image(role: \"opener\"){id,homeSection{displayName},url(ratio: 1.777,size: 200)}}}"
+    let query = Query(withAlias: "ComplexQuery", readingRequest: ReadingRequest(
       name: "content",
       arguments: [
         Argument(key: "ids", value: 153082687)
@@ -129,6 +129,7 @@ class QueryTests: XCTestCase {
       ]
       )
     )
+    
     XCTAssertEqual(query.create(), output, "Output doesn't match request")
   }
 }

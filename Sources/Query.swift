@@ -41,20 +41,26 @@ public struct Query: Operation {
     self.init(withAlias: alias, readingRequests: [request], fragments: fragments)
   }
   
-  public init(withAlias alias: String = "", readingRequests requests: [ReadingRequest], fragments: [Fragment]) {
+  public init(withAlias alias: String = "", readingRequests requests: [ReadingRequest], fragments: [Fragment] = []) {
     self.alias = alias
     self.requests = requests.map {$0}
     self.fragments = fragments
     self.queryType = .Query
   }
   
+  private var queryName: String? {
+    return  alias.isEmpty == false ? "query \(alias)" : nil
+  }
+  
   public func create() -> String {
-    return "query \(alias) {\(requests.map{$0.asGraphQLString}.joinWithSeparator(""))}\(fragments.map {$0.asGraphQLString}.joinWithSeparator(""))"
+    let query = "{\(requests.map{$0.asGraphQLString}.joinWithSeparator(""))}\(fragments.map {$0.asGraphQLString}.joinWithSeparator(""))"
+    return [queryName, query].flatMap { $0 }.joinWithSeparator(" ")
   }
 }
 
 extension Query {
   public var debugDescription: String {
-    return "\nquery \(alias) {\n\t\(requests.map{$0.debugDescription}.joinWithSeparator("\n"))\n}\n\(fragments.map {$0.debugDescription}.joinWithSeparator(""))\n"
+    let query = "{\n\t\(requests.map{$0.debugDescription}.joinWithSeparator("\n"))\n}\n\(fragments.map {$0.debugDescription}.joinWithSeparator(""))"
+    return "\n\([queryName, query].flatMap { $0 }.joinWithSeparator(" "))\n"
   }
 }
